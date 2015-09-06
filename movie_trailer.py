@@ -1,14 +1,37 @@
+#!/usr/bin/python
 import fresh_tomatoes
 import media
+from imdb import IMDb
+""" Fetches details of blockbuster movies from IMDB and stores them
+    as Movie objects. A list containing all such movie objects is
+    sent as argument to open_movies_page method of fresh_tomatoes module."""
+# Creating an imdb object for accessing the IMDB module's methods.
+imdb = IMDb()
 
-pursuit_of_happyness = media.Movie("The Pursuit of Happyness", "Chris Gardner's nearly one-year struggle being homeless", "https://upload.wikimedia.org/wikipedia/en/8/81/Poster-pursuithappyness.jpg", "https://www.youtube.com/watch?v=89Kq8SDyvfg")
+# Creating an empty array
+all_favorite_movies = []
+# Storing the movie names and corresponding Youtube trailer
+# urls in a dictionary object as key-value pairs.
+favorite_movies = {
+    "The Pursuit of Happyness": "https://www.youtube.com/watch?v=89Kq8SDyvfg",
+    "The WhistleBlower": "https://www.youtube.com/watch?v=al3anBiHwmI",
+    "Fight Club": "https://www.youtube.com/watch?v=SUXWAEX2jlg",
+    "Toy Story 2": "https://www.youtube.com/watch?v=Lu0sotERXhI"
+}
 
-whistle_blower = media.Movie("The WhistleBlower", "One woman's fight for all other women", "https://upload.wikimedia.org/wikipedia/en/2/28/The_Whistleblower_Poster.jpg", "https://www.youtube.com/watch?v=al3anBiHwmI")
+# Looping through each item in the dictionary object and retrieving
+# the key and value pair of each item.
+for movie_name, trailer_url in favorite_movies.items():
+    # Fetching the list of movies that match the given name.
+    movies_list = imdb.search_movie(movie_name)
+    # Fetching the movie details of first movie in the list.
+    movie = imdb.get_movie(movies_list[0].movieID)
+    # Instantiating a movie object.
+    movie_details = media.Movie(movie['title'], movie['full-size cover url'],
+                                trailer_url, movie['rating'])
+    # Appending the movies_details object to array.
+    all_favorite_movies.append(movie_details)
 
-frozen = media.Movie("Frozen", "Bond of Two Sisters", "http://img3.wikia.nocookie.net/__cb20131002122858/disney/images/5/58/Frozen-movie-poster.jpg", "https://www.youtube.com/watch?v=TbQm5doF_Uc")
-
-fugitive = media.Movie("Fugitive", "Prove yourself even if it means standing up against the world", "https://upload.wikimedia.org/wikipedia/en/c/c7/The_Fugitive_movie.jpg", "https://www.youtube.com/watch?v=ETPVU0acnrE")
-
-movies_list = [pursuit_of_happyness, whistle_blower, frozen, fugitive]
-
-fresh_tomatoes.open_movies_page(movies_list)
+# Calling the open_movies_page method with an array as argument
+# that contains all the movie objects in it.
+fresh_tomatoes.open_movies_page(all_favorite_movies)
